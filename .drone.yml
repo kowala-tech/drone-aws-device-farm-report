@@ -1,0 +1,67 @@
+workspace:
+  base: /go
+  path: src/github.com/kowala-tech/drone-aws-device-farm-report
+pipeline:
+  build_linux_amd64:
+    image: golang:1.9
+    group: build
+    environment:
+      - GOOS=linux
+      - GOARCH=amd64
+      - CGO_ENABLED=0
+    commands:
+      - go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/drone-aws-device-farm-report
+
+  build_linux_arm64:
+    image: golang:1.9
+    group: build
+    environment:
+      - GOOS=linux
+      - GOARCH=arm64
+      - CGO_ENABLED=0
+    commands:
+      - go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm64/drone-aws-device-farm-report
+
+  build_linux_arm:
+    image: golang:1.9
+    group: build
+    environment:
+      - GOOS=linux
+      - GOARCH=arm
+      - CGO_ENABLED=0
+      - GOARM=7
+    commands:
+      - go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm/drone-aws-device-farm-report
+
+  publish_linux_amd64:
+    image: plugins/docker
+    username: xap5xap
+    repo: kowalatech/drone-aws-device-farm-report
+    tags: [ latest, 1.0.0, 1.0, 1 ]
+    secrets: [ docker_password ]
+    dockerfile: Dockerfile
+    when:
+      branch: master
+      event: push
+
+  publish_linux_arm64:
+    image: plugins/docker
+    username: xap5xap
+    repo: kowalatech/drone-aws-device-farm-report
+    tags: [ linux-arm64 ]
+    secrets: [ docker_password ]
+    dockerfile: Dockerfile.arm64
+    when:
+      branch: master
+      event: push
+
+  publish_linux_arm:
+    image: plugins/docker
+    username: xap5xap
+    repo: kowalatech/drone-aws-device-farm-report
+    tags: [ linux-arm ]
+    secrets: [ docker_password ]
+    dockerfile: Dockerfile.arm
+    when:
+      branch: master
+      event: push
