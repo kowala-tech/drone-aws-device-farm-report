@@ -23,11 +23,6 @@ type Plugin struct {
 
 // Exec runs the plugin
 func (p *Plugin) Exec() error {
-	fmt.Println("Begin ")
-	fmt.Println("Plugin.Key ", p.Key)
-	fmt.Println("Plugin.Secret ", p.Secret)
-	fmt.Println("Plugin.TestProject ", p.TestProject)
-	fmt.Println("Plugin.RunName ", p.RunName)
 
 	// create the configuration
 	conf := &aws.Config{
@@ -56,7 +51,6 @@ func (p *Plugin) Exec() error {
 		if err != nil {
 			return err
 		}
-		fmt.Println("run", run)
 
 		if *run.Status == "COMPLETED" && (*run.Result == "ERRORED" || *run.Result == "FAILED") {
 			return fmt.Errorf("The test run has failed")
